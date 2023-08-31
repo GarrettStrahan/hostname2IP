@@ -1,0 +1,77 @@
+import socket
+import platform
+import subprocess
+
+#Purpose of this program is for an automated way to get the IP addresses of a list of hostnames. Then after the hostnames are translated to IP addresses with the text document IPaddress.txt, it will then ping these addresses to see if they are alive or not. The results of the pings are placed in IPaddress2.txt.
+
+#All you have to do is input all the hostnames in the hostname.txt, one line per hostname. The program will do the rest of the work.
+#Make sure the last line on hostname.txt DOES NOT HAVE A EMPTY LINE, otherwise you'll get a 0.0.0.0 entry, not really a big deal however.
+
+
+#Below is an example how you can get ip address of a hostname via python code.
+# ipaddr = socket.gethostbyname('www.google.com')
+# print(f"ipaddr = {ipaddr}")
+#
+# ipaddr = socket.gethostbyname('ps03dbcjdr01.wellcare.com')
+# print(f"Now it is ipaddr = {ipaddr}")
+
+
+with open("hostnames.txt") as f:
+    content_list = f.readlines()
+hostname_list = [x.strip() for x in content_list] #removes the new line character from the hostname variables
+
+print(f" Here is the list of hostnames {hostname_list}")
+
+iplist = []
+iplist2 = []
+# z = 0
+for x in hostname_list:
+    ipaddr = socket.gethostbyname(x)
+    iplist.append(ipaddr)
+    x = x + " / " + ipaddr
+    # z = z + 1
+    iplist2.append(x)
+    # print(x)
+
+with open(r'Just_IPs.txt', 'w') as fp:
+    for item in iplist:
+        fp.write("%s\n" % item) # write each item on a new line
+    print('Done')
+
+with open(r'IPaddresses.txt', 'w') as fp:
+    for item in iplist2:
+        fp.write("%s\n" % item) # write each item on a new line
+    print('Done')
+
+
+def myping(host):
+    parameter = '-n' if platform.system().lower() == 'windows' else '-c'
+
+    command = ['ping', parameter, '1', host]
+    response = subprocess.call(command)
+
+    if response == 0:
+        return True
+    else:
+        return False
+
+#Examples of how you could ping something via Python Code
+#print(myping("www.google.com"))
+#pingip = '10.140.61.98'
+#print(myping(pingip)) #End of examples
+
+z = 0
+with open(r'IPaddress_Final.txt', 'w') as fp:
+    for item in iplist:
+        # write each item on a new line
+        pingresponse = myping(item)
+        if pingresponse == True:
+            item = item + " / Pings" + " / " + hostname_list[z]
+        if pingresponse == False:
+            item = item + " / Not Pinging" + " / " + hostname_list[z]
+        z = z + 1
+        fp.write("%s\n" % item)
+
+    print('Done')
+
+print("Ending program hostname2IP.py, program created IPaddress.txt (has the ip addresses and the hostname) and IPaddress_Final.txt (This includes the IP address, ping status and hostname)")
