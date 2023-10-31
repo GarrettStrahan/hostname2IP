@@ -12,7 +12,7 @@ import subprocess
 # ipaddr = socket.gethostbyname('www.google.com')
 # print(f"ipaddr = {ipaddr}")
 #
-# ipaddr = socket.gethostbyname('ps03dbcjdr01.wellcare.com')
+# ipaddr = socket.gethostbyname('HOSTNAME PASTED HERE')
 # print(f"Now it is ipaddr = {ipaddr}")
 
 
